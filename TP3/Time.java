@@ -25,10 +25,12 @@ public class Time {
 class TimeTest {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        System.out.print("Input time in seconds: ");
+        System.out.print("Input number of seconds: ");
         try {
-            Time time = Time.parseTime(sc.nextLine());
-            System.out.println(time);
+            String timing = sc.nextLine();
+            Time time = Time.parseTime(timing);
+            
+            System.out.println("the corresponding "+timing+" seconds is "+time);
         }catch (NumberFormatException e){
             System.err.println("Invalid time input!");
         }
