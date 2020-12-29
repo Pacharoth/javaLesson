@@ -1,7 +1,7 @@
 import java.util.Scanner;
 /*Implement an application Java that let user input a number then determine if it is a prime number. Prime number is
 positive number greater than 2 and divisible only to its own and 1.*/
-public class PrimeNumber {
+public class PrimeNumber1 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int num;

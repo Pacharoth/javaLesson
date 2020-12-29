@@ -1,9 +1,11 @@
-import java.time.temporal.WeekFields;
 import java.util.Scanner;
 public class Shipping {
     Scanner sc = new Scanner(System.in);
     private double weight,aTob,bToc;
     private double litreperkilometer,litremax=5000,litreTotal,litre;
+    public double convertDistanceTolitre(double distance){
+        return distance*litreperkilometer;
+    }
     public void readData(){
         System.out.println("Program for calculate the minimum amount of litre need to refill to reach point C.");
         System.out.print("Input distance A to B(km): ");
@@ -18,22 +20,27 @@ public class Shipping {
         litre = litremax-litreTotal;
     }
     public void checkLitre(){   
-        if(weight>0&& weight<=5000){
-            litreperkilometer=10;
-        }else if(weight>5000 && weight<=10000){
-            litreperkilometer=20;
-        }else if(weight>10000&&weight<=20000){
-            litreperkilometer=25;
-        }else if(weight>20000&&weight<=30000){
-            litreperkilometer=30;
+        if(weight>0&& weight<10000){
+            litreperkilometer=weight*10/5000;
+        }
+        else if(weight>=10000&&weight<20000){
+            litreperkilometer=weight*20/10000;
+        }else if(weight>=20000&&weight<30000){
+            litreperkilometer=weight*25/20000;
+        }else if(weight==30000){
+            litreperkilometer=weight*35/30000;
         }
         convertLitre();   
     }
     public void showResult(){
         if(weight<=30000){
             checkLitre();
-            if(litre>0) System.out.println("\nminimum to refill is 0 to reach to point c");
-            else System.out.println("\nminimum to refill to reach to point c is "+(-litre)+" litres");
+            if(litre>0) System.out.println("\nminimum to refill is 0 to reach to point c and remaining "+litre+" litre");
+            else if(litre>=-5000) System.out.println("\nminimum to refill at B to reach to point c is "+(-litre)+" litres");
+            else{
+                if(convertDistanceTolitre(aTob)>5000) System.out.println("\nShip can't reach to point B");
+                else if(convertDistanceTolitre(bToc)>5000) System.out.println("\n Ship at point B cant reach to C");
+            }
         }else System.out.println("\nShip cannot loaded!");
     }
     public static void main(String[] args) {
