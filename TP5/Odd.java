@@ -1,3 +1,4 @@
+//print only OddNumber
 public class Odd {
     public static void main(String[] args) {
         int i=0;

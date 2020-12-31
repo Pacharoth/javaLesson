@@ -4,6 +4,7 @@ public class ex3 {
     public void readNumber(){
         System.out.print("Input number as Integer:");
         Scanner sc = new Scanner(System.in);
+        //read the number we start and take only even number
         a = sc.nextInt();
     }
     public void displayResult(){
