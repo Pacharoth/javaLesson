@@ -1,3 +1,4 @@
+
 import java.util.Scanner;
 
 /*
@@ -9,33 +10,41 @@ import java.util.Scanner;
 -function
 -readString -reverseString -checkPalindrome -displayResult
 */
-public class ex5{
+public class ex5 {
     Scanner sc = new Scanner(System.in);
     private String word;
-    public void readString(){
+
+    public void readString() {
         System.out.print("Please gives a word to check:");
         word = sc.nextLine();
     }
-    public String reverseString(String wordPalin){
+
+    public String reverseString(String wordPalin) {
         StringBuilder result = new StringBuilder();
-        int i=wordPalin.length()-1;
-        while(i>=0){
+        int i = wordPalin.length() - 1;
+        while (i >= 0) {
             result.append(wordPalin.charAt(i));
             i--;
         }
         return result.toString();
     }
-    public boolean checkPalindrome(String wordPalin){
-        String secondStr = reverseString(wordPalin); 
-        if(secondStr.indexOf(wordPalin)>-1)return true;
+
+    public boolean checkPalindrome(String wordPalin) {
+        String secondStr = reverseString(wordPalin);
+        if (secondStr.indexOf(wordPalin) > -1)
+            return true;
         return false;
     }
-    public void displayResult(){
-        if(checkPalindrome(word))System.out.println(word+" is palindrome");
-        else System.out.println(word+" is not palindrome");
+
+    public void displayResult() {
+        if (checkPalindrome(word))
+            System.out.println(word + " is palindrome");
+        else
+            System.out.println(word + " is not palindrome");
     }
 }
-class Palindrome{
+
+class Palindrome {
     public static void main(String[] args) {
         ex5 palindrome = new ex5();
         palindrome.readString();

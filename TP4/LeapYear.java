@@ -1,3 +1,4 @@
+import java.sql.Array;
 import java.util.Scanner;
 public class LeapYear {
     Scanner sc=new Scanner(System.in);

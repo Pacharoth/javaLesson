@@ -1,4 +1,3 @@
-
 import java.util.Scanner;
 /*
 from ex5 and in the same folder we have like reverse method readString and displayResult
