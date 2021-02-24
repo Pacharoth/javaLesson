@@ -13,7 +13,9 @@ public class ProductionThreeNumber {
         return number[0]*number[1]*number[2];
     }
     public void displayResult(){
+        
         System.out.println("Production of them is "+calculateNumber());
+        
     }
     public static void main(String[] args) {
         ProductionThreeNumber result = new ProductionThreeNumber();

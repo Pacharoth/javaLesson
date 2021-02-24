@@ -18,11 +18,10 @@ public class CostCalculation {
         }
     }
     public float calculateCost(){
-        System.out.println(price);
-        if(price>=500)return price*(float)(25/100);
-        else if(price>=200)return price*(float)(12/100);
-        else if(price>=100)return price*(float)(7/100);
-        else if(price>=50)return price*(float)(3/100);
+        if(price>=500)return price-(price*25/100);
+        else if(price>=200)return price-(price*12/100);
+        else if(price>=100)return price-(price*7/100);
+        else if(price>=50)return price-(price*3/100);
         else if(price>=10) return price-2;
         return price;
     }
