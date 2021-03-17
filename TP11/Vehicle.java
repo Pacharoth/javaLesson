@@ -6,14 +6,13 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
-
-//TODO:update
+//TODO: change VehicleType as class put relation
 public class Vehicle {
     private String number;
     private int year_creation;
     private double price;
     private Date date_availability;
-    private String vehicle_type;
+    private VehicleType vehicle_type;
 
     private Statement stmt = null;
     private Connection conn = null;
@@ -22,11 +21,11 @@ public class Vehicle {
     public Vehicle() {
     }
 
-    public String getVehicle_type() {
+    public VehicleType getVehicle_type() {
         return this.vehicle_type;
     }
 
-    public void setVehicle_type(String vehicle_type) {
+    public void setVehicle_type(VehicleType vehicle_type) {
         this.vehicle_type = vehicle_type;
     }
 
@@ -46,7 +45,7 @@ public class Vehicle {
         this.stmt = stmt;
     }
 
-    public Vehicle(String number, int year_creation, double price, Date date_availability, String vehicle_type) {
+    public Vehicle(String number, int year_creation, double price, Date date_availability, VehicleType vehicle_type) {
         setDate_availability(date_availability);
         setNumber(number);
         setPrice(price);
@@ -194,7 +193,7 @@ public class Vehicle {
             getStmt().executeUpdate("use `Vehicle`;");
             System.out.println("databse created");
             getStmt().executeUpdate(
-                    "create table if not exists `Vehicle` (vehicle_number varchar(100) unique,vehicle_type varchar(100),year_of_creation int,price decimal(13,3),date_available DATE);");
+                    "create table if not exists `Vehicle` (vehicle_number varchar(100) primary key,vehicle_type varchar(100) foriegn key,year_of_creation int,price decimal(13,3),date_available DATE);");
             System.err.println("table created");
 
         } catch (Exception e) {
