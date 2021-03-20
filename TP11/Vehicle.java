@@ -6,13 +6,13 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
-//TODO: change VehicleType as class put relation
+
 public class Vehicle {
     private String number;
     private int year_creation;
     private double price;
     private Date date_availability;
-    private VehicleType vehicle_type;
+    private VehicleType vehicle_type = new VehicleType();
 
     private Statement stmt = null;
     private Connection conn = null;
@@ -60,7 +60,7 @@ public class Vehicle {
         if (result != null) {
             System.out.println("Vehicle " + getNumber() + " is exists please update");
             System.out.println("Input type of vehicle:");
-            setVehicle_type(sc.nextLine());
+            getVehicle_type().setName(sc.nextLine());
             System.out.println("Input Year creation:");
             setYear_creation(Integer.parseInt(sc.nextLine()));
             System.out.println("Input price:");
@@ -74,17 +74,18 @@ public class Vehicle {
             }
             try {
                 java.sql.Date date = new java.sql.Date(getDate_availability().getTime());
-                getStmt().executeUpdate(String.format("update `Vehicle` set `vehicle_type`='%s',`year_of_creation`= '%d' ,`price`='%.3f',`date_available`=DATE '"+date.toString()+"';",
-                getVehicle_type(),getYear_creation(),getPrice(),getPrice()));
-                System.out.println("Vehicle "+getNumber()+" has been updated");
+                getStmt().executeUpdate(String.format(
+                        "update `Vehicle` set `vehicle_type_id`=(select `vehicle_type_id` from `VehicleTypes` where vehicle_type='%s'),`year_of_creation`= %d ,`price`=%.3f,`date_available`=DATE '"
+                                + date.toString() + "' where `vehicle_number`='" + getNumber() + "';",
+                        getVehicle_type().getName(), getYear_creation(), getPrice()));
+                System.out.println("Vehicle " + getNumber() + " has been updated");
             } catch (Exception e) {
                 System.out.println("Cant update data");
                 System.out.println(e.getMessage());
             }
         } else {
-            System.out.println("There is no Vehicle "+getNumber());
+            System.out.println("There is no Vehicle " + getNumber());
         }
-
     }
 
     public void removeFromDatabase() {
@@ -92,7 +93,7 @@ public class Vehicle {
         setNumber(sc.nextLine());
         try {
             getStmt().executeUpdate("delete from `Vehicle` where vehicle_number='" + getNumber() + "';");
-            System.out.println("Vehicle "+getNumber()+" has been removed");
+            System.out.println("Vehicle " + getNumber() + " has been removed");
         } catch (Exception e) {
             System.out.println("Can't delete or there is no " + getNumber() + " in vehicle list");
         }
@@ -100,16 +101,19 @@ public class Vehicle {
 
     public void ListFromDatabase() {
         try {
-            ResultSet alldata = getStmt().executeQuery("select * from `Vehicle`;");
-            while (alldata.next()) {
-                System.out.println(String.format(
-                        "Vehicle{Number :%s, vehicle_type:%s,year creation: %d,price: %.2f,date_available: %s }",
-                        alldata.getString("vehicle_number"), alldata.getString("vehicle_type"),
-                        alldata.getInt("year_of_creation"), alldata.getDouble("price"),
-                        alldata.getString("date_available")));
-            }
-            if (!alldata.next()) {
-                System.out.println("There is no vehicle in stock!");
+            ResultSet res = getStmt().executeQuery("select * from `Vehicle` natural join `VehicleTypes`;");
+
+            if (res.next()) {
+                ResultSet alldata = getStmt().executeQuery("select * from `Vehicle` natural join `VehicleTypes`;");
+                while (alldata.next()) {
+                    System.out.println(String.format(
+                            "Vehicle{Number :%s, vehicle_type:%s,year creation: %d,price: %.2f,date_available: %s }",
+                            alldata.getString("vehicle_number"), alldata.getString("vehicle_type"),
+                            alldata.getInt("year_of_creation"), alldata.getDouble("price"),
+                            alldata.getString("date_available")));
+                }
+            } else {
+                System.out.println("There is no data in Vehicle");
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -120,7 +124,7 @@ public class Vehicle {
         System.out.println("Input vehicle number:");
         setNumber(sc.nextLine());
         System.out.println("Input type of vehicle:");
-        setVehicle_type(sc.nextLine());
+        getVehicle_type().setName(sc.nextLine());
         System.out.println("Input Year creation:");
         setYear_creation(Integer.parseInt(sc.nextLine()));
         System.out.println("Input price:");
@@ -152,22 +156,22 @@ public class Vehicle {
         try {
             ResultSet alldata = getStmt()
                     .executeQuery("select * from `Vehicle` where vehicle_number='" + getNumber() + "';");
-            if(!alldata.next()){
+            if (!alldata.next()) {
                 try {
                     java.sql.Date data = new java.sql.Date(getDate_availability().getTime());
                     String sql = String.format(
-                            "insert into `Vehicle` (`vehicle_number`,`vehicle_type`,`year_of_creation`,`price`,`date_available`) values ('%s','%s',%d,%.3f,DATE '"
+                            "insert into `Vehicle` (`vehicle_number`,`vehicle_type_id`,`year_of_creation`,`price`,`date_available`) values ('%s',(select `vehicle_type_id` from `VehicleTypes` where vehicle_type='%s'),%d,%.3f,DATE '"
                                     + data.toString() + "');",
-                            getNumber(), getVehicle_type(), getYear_creation(), getPrice());
-                   
+                            getNumber(), getVehicle_type().getName(), getYear_creation(), getPrice());
+
                     getStmt().executeUpdate(sql);
-                    System.out.println("Vehicle "+getNumber()+" has been added");
+                    System.out.println("Vehicle " + getNumber() + " has been added");
                 } catch (SQLException err) {
                     System.out.println(err.getMessage());
-    
+
                 }
-            }else{
-                System.out.println("Cant insert or Vehicle "+getNumber()+" already exists.");
+            } else {
+                System.out.println("Cant insert or Vehicle " + getNumber() + " already exists.");
             }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -182,7 +186,7 @@ public class Vehicle {
         System.out.println("Enter choice:");
     }
 
-    public void createDatebase() {
+    public void createDatebase(VehicleType vehicleType) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("Connecting database");
@@ -192,8 +196,9 @@ public class Vehicle {
             getStmt().executeUpdate("create database if not exists `Vehicle`;");
             getStmt().executeUpdate("use `Vehicle`;");
             System.out.println("databse created");
+            vehicleType.createDatabase(getConn(), getStmt());
             getStmt().executeUpdate(
-                    "create table if not exists `Vehicle` (vehicle_number varchar(100) primary key,vehicle_type varchar(100) foriegn key,year_of_creation int,price decimal(13,3),date_available DATE);");
+                    "create table if not exists Vehicle (vehicle_number varchar(100) not null primary key,vehicle_type_id int not null,CONSTRAINT `vehicle_type_id` foreign key(`vehicle_type_id`) references `VehicleTypes`(`vehicle_type_id`) on delete cascade,year_of_creation int,price decimal(13,3),date_available DATE);");
             System.err.println("table created");
 
         } catch (Exception e) {
@@ -252,12 +257,12 @@ public class Vehicle {
 
 }
 
+// Please test in Vehicle store.
 class TestVehicle {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int choice;
         Vehicle vehicle = new Vehicle();
-        vehicle.createDatebase();
         while (true) {
             vehicle.readMenu();
             choice = Integer.parseInt(sc.nextLine());
